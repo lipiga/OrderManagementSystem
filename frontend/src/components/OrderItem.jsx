@@ -1,26 +1,33 @@
 import { deleteOrder } from '../services/api'
+import { useNavigate } from 'react-router-dom'
 
-const OrderItem = ({ order, onEdit, onOrderDeleted }) => {
+const OrderItem = ({ order, onOrderUpdated }) => {
+  const navigate = useNavigate()
+
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this order?')) {
       try {
         await deleteOrder(order._id)
-        onOrderDeleted()
+        onOrderUpdated()
       } catch (error) {
         console.error('Error deleting order:', error)
       }
     }
   }
 
-  const statusClass = 
-    order.orderStatus === 'Yet to Pack' ? 'status-processing' :
-    order.orderStatus === 'Delivered' ? 'status-delivered' :
-    'status-pending'
+  const handleEdit = () => {
+    navigate(`/?edit=${order._id}`)
+  }
 
-  return (
+  const statusClass =
+    order.orderStatus === 'Yet to Pack' ? 'status-processing' :
+      order.orderStatus === 'Delivered' ? 'status-delivered' :
+        'status-pending'
+
+return (
     <div className="order">
       <div className="order-actions">
-        <button className="btn btn-success" onClick={() => onEdit(order)}>
+        <button className="btn btn-success" onClick={handleEdit}>
           Edit
         </button>
         <button className="btn btn-danger" onClick={handleDelete}>
@@ -30,29 +37,31 @@ const OrderItem = ({ order, onEdit, onOrderDeleted }) => {
       <div className="order-content">
         <div className="order-header">
           <h3 className="order-title">{order.customerName}</h3>
-          <span className={`order-status ${statusClass}`}>{order.orderStatus}</span>
-        </div>
-        
-        <div className="order-details">
-          <p><strong>Payment:</strong> {order.paymentMode}</p>
-          <p><strong>Address:</strong> {order.address}</p>
+          <span className={`order-status ${statusClass}`}>
+            {order.orderStatus}
+          </span>
         </div>
         
         <div className="order-products">
-          {order.products.map((p, index) => (
+          {order.products.slice(0, 3).map((p, index) => (
             <div key={index} className="order-product">
-              {p.name} - ₹{p.price} × {p.qty} = ₹{p.price * p.qty}
+              {p.name} (₹{p.price} × {p.qty})
             </div>
           ))}
+          {order.products.length > 3 && (
+            <div className="order-product">
+              +{order.products.length - 3} more...
+            </div>
+          )}
         </div>
+        
+        <p className="order-total">Total: ₹{order.total.toFixed(2)}</p>
         
         {order.customization && (
           <div className="customization">
-            <strong>Customization:</strong> {order.customization}
+            <strong>Note:</strong> {order.customization}
           </div>
         )}
-        
-        <p className="order-total">Total: ₹{order.total}</p>
       </div>
     </div>
   )

@@ -70,7 +70,7 @@ const OrderForm = ({ orderToEdit, onOrderSaved, onCancel }) => {
   }
 
   return (
-    <div className="card">
+    <div className="card" style={{ width: '100%' }}>
       <h2>{orderToEdit ? 'Edit Order' : 'Create New Order'}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
