@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:5000/api/orders'
+const API_URL = 'https://ordermanagementsystem-backend.onrender.com/api/orders'
 
 export const createOrder = (orderData) => axios.post(API_URL, orderData)
 export const getOrders = () => axios.get(API_URL)
