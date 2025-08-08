@@ -19,12 +19,12 @@ const OrderItem = ({ order, onOrderUpdated }) => {
     navigate(`/?edit=${order._id}`)
   }
 
-  const statusClass =
+  const statusClass = 
     order.orderStatus === 'Yet to Pack' ? 'status-processing' :
-      order.orderStatus === 'Delivered' ? 'status-delivered' :
-        'status-pending'
+    order.orderStatus === 'Delivered' ? 'status-delivered' :
+    'status-pending'
 
-return (
+  return (
     <div className="order">
       <div className="order-actions">
         <button className="btn btn-success" onClick={handleEdit}>
@@ -37,31 +37,29 @@ return (
       <div className="order-content">
         <div className="order-header">
           <h3 className="order-title">{order.customerName}</h3>
-          <span className={`order-status ${statusClass}`}>
-            {order.orderStatus}
-          </span>
+          <span className={`order-status ${statusClass}`}>{order.orderStatus}</span>
+        </div>
+        
+        <div className="order-details">
+          <p><strong>Payment:</strong> {order.paymentMode}</p>
+          <p><strong>Address:</strong> {order.address}</p>
         </div>
         
         <div className="order-products">
-          {order.products.slice(0, 3).map((p, index) => (
+          {order.products.map((p, index) => (
             <div key={index} className="order-product">
-              {p.name} (₹{p.price} × {p.qty})
+              {p.name} - ₹{p.price} × {p.qty} = ₹{(p.price * p.qty).toFixed(2)}
             </div>
           ))}
-          {order.products.length > 3 && (
-            <div className="order-product">
-              +{order.products.length - 3} more...
-            </div>
-          )}
         </div>
-        
-        <p className="order-total">Total: ₹{order.total.toFixed(2)}</p>
         
         {order.customization && (
           <div className="customization">
-            <strong>Note:</strong> {order.customization}
+            <strong>Customization:</strong> {order.customization}
           </div>
         )}
+        
+        <p className="order-total">Total: ₹{order.total.toFixed(2)}</p>
       </div>
     </div>
   )

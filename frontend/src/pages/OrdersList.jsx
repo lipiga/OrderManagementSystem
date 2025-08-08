@@ -16,7 +16,7 @@ const OrdersList = () => {
       setOrders(response.data)
       
       // Calculate total turnover from delivered orders
-      const deliveredOrders = response.data.filter(o => o.orderStatus === 'Delivered')
+      const deliveredOrders = response.data.filter(o => o.orderStatus)
       const turnover = deliveredOrders.reduce((sum, order) => sum + order.total, 0)
       setTotalTurnover(turnover)
     } catch (error) {
@@ -32,10 +32,13 @@ const OrdersList = () => {
   ]
 
   return (
-    <>
-      <h1>Order Management</h1>
-      <div className="turnover-display">
-        <h3>Total Turnover: ₹{totalTurnover.toFixed(2)}</h3>
+    <div className="orders-page">
+      <div className="page-header">
+        <h1>Order Management</h1>
+        <div className="turnover-box">
+          <span className="turnover-label">Total Turnover:</span>
+          <span className="turnover-amount">₹{totalTurnover.toFixed(2)}</span>
+        </div>
       </div>
       
       <div className="order-sections-container">
@@ -48,7 +51,7 @@ const OrdersList = () => {
           />
         ))}
       </div>
-    </>
+    </div>
   )
 }
 
