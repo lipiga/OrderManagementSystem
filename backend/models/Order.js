@@ -1,28 +1,42 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-const productSchema = new mongoose.Schema({
+const ProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
   price: { type: Number, required: true },
-  qty: { type: Number, required: true }
+  qty: { type: Number, required: true, min: 0 }
 });
 
-const orderSchema = new mongoose.Schema({
+const OrderSchema = new mongoose.Schema({
   customerName: { type: String, required: true },
-  products: [productSchema],
-  total: { type: Number, required: true },
-  address: { type: String, required: true },
-  customization: { type: String, default: '' },
-  paymentMode: { 
-    type: String, 
-    required: true,
-    enum: ['GPay', 'Cash', 'Credit Card', 'Bank Transfer']
+  products: { type: [ProductSchema], default: [] },
+  customization: { type: String, default: "" },
+  address: { type: String, default: "" },
+  createdAt: { type: Date, default: () => new Date() },
+  paymentMode: { type: String, enum: ["gpay", "cash"], default: "cash" },
+  orderStatus: {
+    type: String,
+    enum: ["yet to create", "yet to pack", "yet to deliver", "delivered"],
+    default: "yet to create"
   },
-  orderStatus: { 
-    type: String, 
-    required: true,
-    enum: ['Yet to Create', 'Yet to Pack', 'Yet to Deliver', 'Delivered']
-  },
-  createdAt: { type: Date, default: Date.now }
+  paymentStatus: { type: String, enum: ["paid", "not paid"], default: "not paid" },
+  totalAmount: { type: Number, default: 0 }
 });
 
-module.exports = mongoose.model('Order', orderSchema);
+// Compute total before save
+OrderSchema.pre("save", function (next) {
+  this.totalAmount = this.products.reduce((s, p) => s + (p.price * p.qty), 0);
+  next();
+});
+
+// Also update total on updateOne/findOneAndUpdate flows by middleware
+OrderSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+  if (update?.products) {
+    const total = update.products.reduce((s, p) => s + (p.price * p.qty), 0);
+    update.totalAmount = total;
+    this.setUpdate(update);
+  }
+  next();
+});
+
+export default mongoose.model("OrderWeavenKnits", OrderSchema);

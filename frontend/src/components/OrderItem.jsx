@@ -2,7 +2,7 @@ import { deleteOrder } from '../services/api'
 import { useNavigate } from 'react-router-dom'
 
 const OrderItem = ({ order, onOrderUpdated }) => {
-  const navigate = useNavigate()
+const navigate = useNavigate()
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this order?')) {

@@ -17,12 +17,13 @@ const AddOrder = () => {
           setOrderToEdit(response.data)
         } catch (error) {
           console.error('Error fetching order:', error)
+          navigate('/')
         }
       }
     }
     
     fetchOrderToEdit()
-  }, [searchParams])
+  }, [searchParams, navigate])
 
   const handleOrderSaved = () => {
     setOrderToEdit(null)
@@ -31,10 +32,10 @@ const AddOrder = () => {
 
   const handleCancelEdit = () => {
     setOrderToEdit(null)
-    navigate('/')
+    navigate('/orders')
   }
 
- return (
+  return (
     <div className="form-page">
       <h1>{orderToEdit ? 'Edit Order' : 'Add New Order'}</h1>
       <OrderForm
